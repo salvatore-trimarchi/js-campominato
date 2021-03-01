@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- *** [ FONTS ] *** -->
+    <!-- <link rel="preconnect" href="https://fonts.gstatic.com"> -->
+    <!-- <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet"> -->
+    <!-- *** [ FONT AWESOME ] *** -->
+    <!-- <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.2/css/all.min.css" integrity="sha512-HK5fgLBL+xu6dm/Ii3z4xhlSUyZgTT9tuc/hSrtw6uzJOvgRr2a9jyxxT1ely+B+xFAmJKVSTbpM/CuL7qxO8w==" crossorigin="anonymous" /> -->
+    <!-- *** [ REMOTE BOOTSTRAP ] *** -->
+    <!-- <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous"> -->
+    <!-- *** [ LOCAL BOOTSTRAP ] *** (@grid-float-breakpoint: @screen-md-min) -->
+    <!-- <link rel="stylesheet" href="css/bootstrap.min.css"> -->
+    <!-- *** [ MY STYLE CSS ] *** -->
+    <!-- <link rel="stylesheet" href="css/12bool.css"> -->
+    <link rel="stylesheet" href="css/master.css">
+    <!-- *** -->
+    <link rel="shortcut icon" href="#">
+    <title></title>
+  </head>
+  <body>
+
+    <!------------------------------------------
+
+      Esercizio di oggi: campo minato
+      repo/cartella: js-campominato
+      Descrizione
+
+      Il computer deve generare 16 numeri casuali tra 1 e 100.
+      I numeri non possono essere duplicati
+
+      In seguito deve chiedere all’utente (100 - 16) volte di inserire un numero alla volta, sempre compreso tra 1 e 100.
+
+      L’utente non può inserire più volte lo stesso numero.
+
+      Se il numero è presente nella lista dei numeri generati, la partita termina, 
+      
+      altrimenti si continua chiedendo all’utente un altro numero.
+
+      La partita termina quando il giocatore inserisce un numero “vietato” o raggiunge il numero massimo possibile di numeri consentiti.
+
+
+      Al termine della partita il software deve comunicare il punteggio, cioè il numero di volte che l’utente ha inserito un numero consentito.
+
+
+
+      BONUS: (da fare solo se funziona tutto il resto)
+      all’inizio il software richiede anche una difficoltà all’utente che cambia il range di numeri casuali:
+      con difficoltà 0 => tra 1 e 100
+      con difficoltà 1 =>  tra 1 e 80
+      con difficoltà 2 => tra 1 e 50
+
+
+      Consigli del giorno: :party_wizard:
+      
+      Scriviamo prima cosa vogliamo fare passo passo in italiano, dividiamo il lavoro in micro problemi.
+      
+      Ad esempio:
+      Di cosa ho bisogno per generare i numeri?
+      Proviamo sempre prima con dei console.log() per capire se stiamo ricevendo i dati giusti.
+      Proviamo prima con pochi numeri, inserire 86 numeri ogni volta potrebbe essere un po’ scocciante :wink:
+      Le validazioni e i controlli possiamo farli anche in un secondo momento.
+      Ricordatevi che se non sappiamo quante volte dobbiamo fare una cosa ci serve…
+      Buon appetito a tutti e buon pomeriggio dal vostro Presidente!
+
+
+    ------------------------------------------->
+
+    <div id="output"></div>
+
+    <script type="text/javascript" src="js/main.js"></script>
+
+  </body>
+</html>
