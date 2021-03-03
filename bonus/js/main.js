@@ -1,16 +1,16 @@
 //###################################################### 
 // UI GAME
 
-const mineN       =  3,//16, // number of mines
-      level0range = 10,//100, // level 0 steps 
-      level1range =  8,//80, // level 1 steps
-      level2range =  5;//50; // level 2 steps
+const mineN       =  16, // number of mines
+      level0range = 100, // level 0 steps 
+      level1range =  80, // level 1 steps
+      level2range =  50; // level 2 steps
 
-var   rangeN,                       // total steps
-      mineField,                    // mine field list
-      usrAttemptList = [],          // user attempt list
-      usrCount,                     // user attempt counter
-      usrOut;                       // user KIA or escaped, true/false
+var   rangeN,              // total steps
+      mineField,           // mine field list
+      usrAttemptList = [], // user attempt list
+      usrCount,            // user attempt counter
+      usrOut;              // user KIA or escaped, true/false
 
 // form sources
 var usrLevelForm   = document.getElementById('usr_level');
@@ -69,7 +69,7 @@ function tryBtnAction() {
   }
 }
 function eraseBtnAction() {
-  levelDisplay('form','','','','');  
+  levelDisplay('form','','','','');
   attemptFormDisplay('hide','','');
   attemptListDisplay('hide','');
 }
@@ -142,7 +142,7 @@ function attemptListDisplay(_mode,_count) {
       resultList.innerHTML += '<tr><td>'+_count+'</td><td class="strong">BOOM!</td><tr>';
       break;
     case 'alive':
-      resultList.innerHTML += '<tr><td colspan="2" class="strong">SEI SALVO!</td><tr>';
+      resultList.innerHTML += '<tr><td colspan="2"><strong>SEI SALVO!</strong></td><tr>';
     break;
     default: //
   }
@@ -166,7 +166,7 @@ function noticeMsg(_msg,_range,_try,_count) {
       checkMsgHtml.innerHTML = 'Sei finito su una mina al passo <span class="strong">'+_count+'</span>!';
       break;
     case 'alive': // alive!
-      checkMsgHtml.innerHTML = '<strong>Sopravvissuto!</strong>';
+      checkMsgHtml.innerHTML = '<strong class="strong">Sopravvissuto!</strong>';
       break;  
     default: // hide message
       checkMsgHtml.innerHTML = '';
