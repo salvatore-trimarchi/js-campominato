@@ -1,16 +1,16 @@
 //###################################################### 
-// UI GAME
+// GAME + UI
 
 const mineN       =  16, // number of mines
       level0range = 100, // level 0 steps 
       level1range =  80, // level 1 steps
       level2range =  50; // level 2 steps
 
-var   rangeN,              // total steps
-      mineField,           // mine field list
-      usrAttemptList = [], // user attempt list
-      usrCount,            // user attempt counter
-      usrOut;              // user KIA or escaped, true/false
+var   rangeN,         // total steps
+      mineField,      // mine field list, array
+      usrAttemptList, // user attempt list, array
+      usrCount,       // user attempt counter
+      usrOut;         // user KIA or escaped, bool
 
 // form sources
 var usrLevelForm   = document.getElementById('usr_level');
@@ -26,7 +26,8 @@ document.getElementById('resume_btn').addEventListener('click', resumeBtnAction)
 function levelBtnAction() { 
   usrOut = false;
   usrLevel = usrLevelForm.value;
-  if (usrLevel != '') {
+  if (usrLevel != '') { 
+    // level settings
     rangeN = rangeByLevel(usrLevel);
     usrCount = 1;      
     console.log('----------------------------------\n'+
@@ -38,7 +39,8 @@ function levelBtnAction() {
     mineField = mineFieldGen(mineN,rangeN,true);
     console.log('mine field:\n'+mineField);
   } else {
-    noticeMsg('level',rangeN,'','');
+    // no level defined
+    noticeMsg('nolevel',rangeN,'','');
   }
 }
 function tryBtnAction() {
@@ -62,9 +64,11 @@ function tryBtnAction() {
         attemptFormDisplay('update',usrCount,rangeN);
       }
     } else {
+      // number already tried
       noticeMsg('repeated','',usrTry,'');
     }
   } else {
+    // wrong input
     noticeMsg('wrong',rangeN,'','');
   }
 }
@@ -159,7 +163,7 @@ function noticeMsg(_msg,_range,_try,_count) {
     case 'wrong': // wrong input
       checkMsgHtml.innerHTML = 'Inserisci un numero da 1 a '+_range+'!';
       break;
-    case 'level': // no level
+    case 'nolevel': // no level defined
       checkMsgHtml.innerHTML = 'Inserisci il livello!';
       break;
     case 'boom': // boom!
