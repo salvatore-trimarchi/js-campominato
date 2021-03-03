@@ -8,7 +8,6 @@ const mineN       =  16, // number of mines
 
 var   rangeN,                       // total steps
       mineField,                    // mine field list
-      usrAttemptN = rangeN - mineN, // user attempt max number
       usrAttemptList = [],          // user attempt list
       usrCount,                     // user attempt counter
       usrOut;                       // user KIA or escaped, true/false
@@ -17,22 +16,18 @@ var   rangeN,                       // total steps
 var usrLevelForm   = document.getElementById('usr_level');
 var usrAttemptForm = document.getElementById('usr_attempt'); // value, placeholder
 
-// ** BUTTON LISTENERS (core dynamics) **
+// ** BUTTON LISTENERS (core interaction) **
 document.getElementById('level_btn').addEventListener('click',  levelBtnAction);  // level - game start
 document.getElementById('check_btn').addEventListener('click',  tryBtnAction);    // try - game play
 document.getElementById('erase_btn').addEventListener('click',  eraseBtnAction);  // erase - game quit
 document.getElementById('resume_btn').addEventListener('click', resumeBtnAction); // game resume
 
-// ** BUTTON FUNCTIONS **
+// ** BUTTON FUNCTIONS (core dynamics) **
 function levelBtnAction() { 
   usrOut = false;
   usrLevel = usrLevelForm.value;
   if (usrLevel != '') {
-    switch (usrLevel) {
-      case 'difficile':  rangeN = level2range; break;
-      case 'intermedio': rangeN = level1range; break;
-      default:           rangeN = level0range;
-    }
+    rangeN = rangeByLevel(usrLevel);
     usrCount = 1;      
     console.log('livello '+usrLevel+', passi '+rangeN);
     levelDisplay('update',usrCount);
@@ -47,7 +42,7 @@ function levelBtnAction() {
 }
 function tryBtnAction() {
   usrTry = parseInt(usrAttemptForm.value);
-  if (!isNaN(usrTry) && usrTry >= 1 && usrTry <= rangeN) { 
+  if (!isNaN(usrTry) && usrTry >= 1 && usrTry <= rangeN) {
     if (mineField.indexOf(usrTry) != -1) {             // ** BAD CASE **
       usrOut = true;
       noticeMsg('boom');
@@ -55,13 +50,13 @@ function tryBtnAction() {
     } else if (usrAttemptList.indexOf(usrTry) == -1) { // ** LUCKY CASE **
       usrAttemptList.push(usrTry);
       console.log('passo '+usrCount+': '+usrAttemptList);
-      attemptListDisplay('fill',usrCount);
+      attemptListDisplay('update',usrCount);
       usrCount++;
-      if (rangeN-mineN-usrCount+1==0) {                // ** HAPPY END **
+      if (rangeN-mineN-usrCount+1==0) {       // ** HAPPY END **
         usrOut = true;
         noticeMsg('alive');
         attemptListDisplay('alive',usrCount);
-      } else {                                         // ** RE-TRYING
+      } else {                                // ** RE-TRYING **
         levelDisplay('update',usrCount);
         attemptFormDisplay('update',usrCount);
       }
@@ -139,7 +134,7 @@ function attemptListDisplay(mode,count) {
       buttonBox.className     = 'hide';
       usrAttemptList          = [];
       break;
-    case 'fill': // attempt list - fill
+    case 'update': // attempt list - fill
       resultList.innerHTML += '<tr><td>'+count+'</td><td>'+usrAttemptList[count-1]+'</td><tr>';
       break;
     case 'boom':
@@ -182,7 +177,14 @@ function noticeMsg(w) {
   }
 }
 
-// ** MINE FIELD GENERATION FUNCTION **
+// ** GAME FUNCTIONS **
+function rangeByLevel(_choice) {
+  switch (_choice) {
+    case 'difficile':  return level2range;
+    case 'intermedio': return level1range;
+    default:           return level0range;
+  }
+}
 /**
  * ritorna array
  * _mineNum numeri diversi tra 1 e _rangeNum
@@ -194,10 +196,9 @@ function mineFieldGen(_mineNum,_rangeNum,_bolSort) {
     var n = randomNumber(1,_rangeNum);
     if (mf.indexOf(n) == -1) mf.push(n);
   }
-  if (_bolSort) mf.sort();
+  if (_bolSort) mf.sort(function(a,b) {return a-b;});
   return mf;
 }
-
 function randomNumber(a,b) {
   return Math.floor(Math.random()*(b-a+1)+a);
 }
