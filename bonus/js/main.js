@@ -28,9 +28,10 @@ document.getElementById('resume_btn').addEventListener('click', resumeBtnAction)
 
 // ** BUTTON FUNCTIONS (core dynamics) **
 function levelBtnAction() { 
+  document.getElementById('grid').style.animation = '';
   usrOut = false;
   usrLevel = usrLevelForm.value;
-  if (usrLevel != '') { 
+  if (usrLevel != '') {
     // level settings
     rangeN = rangeByLevel(usrLevel);
     usrCount = 1;      
@@ -42,7 +43,7 @@ function levelBtnAction() {
     // mine field generation
     mineField = mineFieldGen(mineN,rangeN);
     // mine field grid deploy & show
-    mineGridDeploy(mineField,rangeN,'grid');
+    mineGridDeploy(mineField,rangeN,'grid',false);
     elDisplay('grid_box','show');
     console.log('mine field:\n'+mineField);
   } else {
@@ -56,12 +57,14 @@ function tryBtnAction(_cell) {
     usrTry = parseInt(usrAttemptForm.value);
   } else {
     usrTry = parseInt(_cell);
+    resumeBtnAction();
   }
   if (!isNaN(usrTry) && usrTry >= 1 && usrTry <= rangeN) {
     if (mineField.indexOf(usrTry) != -1) {             // ** BAD STEP **
       usrOut = true;
       noticeMsg('boom','','',usrCount);
       attemptListDisplay('boom',usrCount);
+      mineGridDramaCell(mineField,rangeN);
     } else if (usrAttemptList.indexOf(usrTry) == -1) { // ** LUCKY STEP **
       usrAttemptList.push(usrTry);
       console.log('passo '+usrCount+': '+usrAttemptList);
@@ -71,10 +74,11 @@ function tryBtnAction(_cell) {
         usrOut = true;
         noticeMsg('alive','','','');
         attemptListDisplay('alive','');
+        mineGridPassedCell(usrTry,rangeN);
       } else {                                   // ** LUCKY STEP: RE-TRYING **
         levelDisplay('update',usrCount,rangeN,mineN,usrLevel);
         attemptFormDisplay('update',usrCount,rangeN);
-        mineGridPassedCell(usrTry);
+        mineGridPassedCell(usrTry,rangeN);
       }
     } else {
       // number already tried
@@ -204,20 +208,27 @@ function noticeMsg(_msg,_range,_try,_count) {
   }
 }
 
-// ** GAME FUNCTIONS **
-function mineGridDeploy(_mineField,_rangeN,_elID) {
+// ** 2D GAME FUNCTIONS **
+function mineGridDeploy(_mineField,_rangeN,_elID,_bol) {
   var row = gridByRange(_rangeN)[0];
   var col = gridByRange(_rangeN)[1];
   var el = document.getElementById(_elID);
-  // var mineIcon = '<i class="fas fa-bomb"></i>';
   var cell = 1, html = '';
   while (cell<=(row*col)) {
     for (var i=1; i<=row; i++) {
       html += '<tr>';
       for (var j=1; j<=col; j++) {
-        var classMine = (_mineField.indexOf(cell) != -1) ? 'class="mine"' : 'class="safe"'; 
-        var onclickCell = 'onclick="mineGridClick(\''+_mineField+'\',\''+cell+'\')"';
-        html += '<td id="'+cell+'" '+classMine+' '+onclickCell+'>'+cell+'</td>';
+        var classMine;
+        if (_bol) { 
+          classMine = (_mineField.indexOf(cell) != -1) ? 'class="mine"' : 'class="safe"';
+          cellView  = (_mineField.indexOf(cell) != -1) ? '<i class="fas fa-bomb"></i>' : cell; 
+        } else { 
+          classMine = '';
+          cellView = cell;
+        } 
+        // var onclickCell = 'onclick="mineGridClick(\''+_mineField+'\',\''+cell+'\')"';
+        var onclickCell = 'onclick="mineGridClick(\''+cell+'\')"';
+        html += '<td id="'+cell+'" '+classMine+' '+onclickCell+'>'+cellView+'</td>';
         cell++;
       }
       html += '</tr>';
@@ -225,11 +236,28 @@ function mineGridDeploy(_mineField,_rangeN,_elID) {
   }
   el.innerHTML = html;
 }
-function mineGridClick(_mineField,_cell) {
-  tryBtnAction(_cell);
+function mineGridClick(_cell) {
+  if (!usrOut) tryBtnAction(_cell);
 }
-function mineGridPassedCell(_cell) {
+function mineGridPassedCell(_cell,_range) {
   document.getElementById(_cell).className = 'passed';
+  mineGridNeighborsHint(_cell,_range);
+}
+function mineGridNeighborsHint(_cell,_range) {
+  var c = gridByRange(_range)[1], count = 0;
+  var n = [_cell-c-1,_cell-c,_cell-c+1,_cell-1,_cell+1,_cell+c-1,_cell+c,_cell+c+1];
+  for (var i=0; i<n.length; i++) {
+    count += (mineField.indexOf(n[i]) != -1) ? 1 : 0;
+  }
+  console.log('bad neighbors: '+count);
+  document.getElementById(_cell).innerHTML = count;
+}
+function mineGridDramaCell(_mineField,_rangeN) {
+  mineGridDeploy(_mineField,_rangeN,'grid',true);
+  mineGridDramaAnimation();
+}
+function mineGridDramaAnimation() {
+  document.getElementById('grid').style.animation = 'boom 0.6s ease-in-out both';
 }
 function rangeByLevel(_choice) {
   switch (_choice) {

@@ -144,6 +144,8 @@ main .input_form #msg button {
 
 #grid tr td {
   padding: 3px;
+  width: 40px;
+  height: 40px;
   background-color: var(--realwhite);
   border: 3px solid var(--white);
   border-radius: 20%;
@@ -158,9 +160,16 @@ main .input_form #msg button {
   color: var(--realwhite);
 }
 #grid .passed {
-  background-color: var(--black);
+  background-color: var(--green);
   color: var(--realwhite);
 }
+@keyframes boom {
+  20% { transform: translateX(50px)  rotate(10deg);  }
+  40% { transform: translateX(-50px) rotate(-10deg); }
+  60% { transform: translateX(50px)  rotate(10deg);  }
+  80% { transform: translateX(-50px) rotate(-10deg); }
+ 100% { transform: translateX(0)     rotate(0deg);   }
+ }
 
 /****************************************************************
 **  DISPLAY ON/OFF
