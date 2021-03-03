@@ -12,42 +12,6 @@ var level0range = rowN0*colN0, // 100 level 0 steps
 
 var mineSet;
 
-function mineGridGen(_mineN,_rowN,_colN,_elID) {
-  // mine set generation
-  var ms = [];
-  while (ms.length<_mineN) {
-    // var ij = parseInt(''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1));
-    var ij = ''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1);
-    if (ms.indexOf(ij) == -1) ms.push(ij);
-  }
-  ms.sort(function(a,b){return a-b;});
-  console.log('------------------------------\nmineSet:\n'+ms);
-  // mine deploy on grid
-  var el = document.getElementById(_elID), html = '';
-  var mineIcon = '<i class="fas fa-bomb"></i>';
-  for (var i=0; i<_rowN; i++) {
-    html += '<tr>';
-    for (var j=0; j<_colN; j++) {
-      // var ij = parseInt(''+i+j);
-      var ij = ''+i+j;
-      var classMine = (ms.indexOf(ij) != -1) ? 'class="mine"' : '' ; 
-      var onclickCell = 'onclick="clickCell(\''+ij+'\')"';
-      html += '<td id="'+ij+'" '+classMine+' '+onclickCell+'>'+ij+'</td>';
-    }
-    html += '</tr>';
-  }
-  el.innerHTML = html;
-  return ms;
-}
-
-function clickCell(_cell) {
-  if (mineSet.indexOf(_cell) == -1) 
-    console.log('cell '+_cell+' safe clicked!');
-  else 
-    console.log('boom on cell '+_cell+'!');
-}
-
-
 
 //###################################################### 
 // GAME + 1D UI
@@ -82,11 +46,12 @@ function levelBtnAction() {
     attemptFormDisplay('update',usrCount,rangeN);
     attemptListDisplay('show','');
     // mine field generation
-    mineField = mineFieldGen(mineN,rangeN,true);
-    console.log('mine field:\n'+mineField);
-    // grid gen & display
-    mineSet = mineGridGen(mineN,gridByRange(rangeN)[0],gridByRange(rangeN)[1],'grid');
+    mineField = mineFieldGen(mineN,rangeN);
+    // mine field grid deploy
+    mineGridDeploy(mineField,rangeN,'grid');
+    // mineField = mineSet;
     elDisplay('grid_box','show');
+    console.log('mine field:\n'+mineField);
   } else {
     // no level defined
     noticeMsg('nolevel',rangeN,'','');
@@ -241,6 +206,32 @@ function noticeMsg(_msg,_range,_try,_count) {
 }
 
 // ** GAME FUNCTIONS **
+function mineGridDeploy(_mineField,_rangeN,_elID) {
+  var row = gridByRange(_rangeN)[0];
+  var col = gridByRange(_rangeN)[1];
+  var el = document.getElementById(_elID);
+  // var mineIcon = '<i class="fas fa-bomb"></i>';
+  var cell = 1, html = '';
+  while (cell<=(row*col)) {
+    for (var i=1; i<=row; i++) {
+      html += '<tr>';
+      for (var j=1; j<=col; j++) {
+        var classMine = (_mineField.indexOf(cell) != -1) ? 'class="mine"' : 'class="safe"'; 
+        var onclickCell = 'onclick="mineGridClick(\''+_mineField+'\',\''+cell+'\')"';
+        html += '<td id="'+cell+'" '+classMine+' '+onclickCell+'>'+cell+'</td>';
+        cell++;
+      }
+      html += '</tr>';
+    }
+  }
+  el.innerHTML = html;
+}
+function mineGridClick(_mineField,_cell) {
+  if (_mineField.indexOf(_cell) == -1) 
+    console.log('safe click on cell '+_cell+'!');
+  else 
+    console.log('BOOM on cell '+_cell+'!');
+}
 function rangeByLevel(_choice) {
   switch (_choice) {
     case 'difficile':  return level2range;
@@ -259,14 +250,14 @@ function gridByRange(_range) {
  * ritorna array
  * _mineNum numeri diversi tra 1 e _rangeNum
  */ 
-function mineFieldGen(_mineNum,_rangeNum,_bolSort) {
+function mineFieldGen(_mineNum,_rangeNum) {
   if (_mineNum > _rangeNum) _mineNum = _rangeNum;
   var mf = [];
   while (mf.length<_mineNum) {
     var n = randomNumber(1,_rangeNum);
     if (mf.indexOf(n) == -1) mf.push(n);
   }
-  if (_bolSort) mf.sort(function(a,b) {return a-b;});
+  mf.sort(function(a,b) {return a-b;});
   return mf;
 }
 function randomNumber(a,b) {
@@ -293,7 +284,7 @@ console.log('livello '+level+', passi '+rangeN);
 var usrAttemptN = rangeN - mineN, // numero massimo di tentativi utente
     usrAttemptList = [];          // elenco di tentativi utente
 
-var mineField = mineFieldGen(mineN,rangeN,false);
+var mineField = mineFieldGen(mineN,rangeN);
 console.log('mine field:\n'+mineField);
 
 var counter = 1, usrKia = false;

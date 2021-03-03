@@ -143,6 +143,7 @@ main .input_form #msg button {
 */
 
 #grid tr td {
+  padding: 3px;
   background-color: var(--realwhite);
   border: 3px solid var(--white);
   border-radius: 20%;
@@ -150,6 +151,10 @@ main .input_form #msg button {
 }
 #grid .mine {
   background-color: var(--purple);
+  color: var(--realwhite);
+}
+#grid .safe {
+  background-color: var(--green);
   color: var(--realwhite);
 }
 
