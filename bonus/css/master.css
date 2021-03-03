@@ -157,6 +157,10 @@ main .input_form #msg button {
   background-color: var(--green);
   color: var(--realwhite);
 }
+#grid .passed {
+  background-color: var(--black);
+  color: var(--realwhite);
+}
 
 /****************************************************************
 **  DISPLAY ON/OFF

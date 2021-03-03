@@ -10,15 +10,9 @@ var level0range = rowN0*colN0, // 100 level 0 steps
     level1range = rowN1*colN1, //  81 level 1 steps
     level2range = rowN2*colN2; //  49 level 2 steps
 
-var mineSet;
-
-
-//###################################################### 
-// GAME + 1D UI
-
 var   rangeN,         // total steps
       mineField,      // mine field list, array
-      usrAttemptList, // user attempt list, array
+      usrAttemptList = [], // user attempt list, array
       usrCount,       // user attempt counter
       usrOut;         // user KIA or escaped, bool
 
@@ -47,9 +41,8 @@ function levelBtnAction() {
     attemptListDisplay('show','');
     // mine field generation
     mineField = mineFieldGen(mineN,rangeN);
-    // mine field grid deploy
+    // mine field grid deploy & show
     mineGridDeploy(mineField,rangeN,'grid');
-    // mineField = mineSet;
     elDisplay('grid_box','show');
     console.log('mine field:\n'+mineField);
   } else {
@@ -57,8 +50,13 @@ function levelBtnAction() {
     noticeMsg('nolevel',rangeN,'','');
   }
 }
-function tryBtnAction() {
-  usrTry = parseInt(usrAttemptForm.value);
+function tryBtnAction(_cell) {
+  var usrTry;
+  if (isNaN(_cell)) {
+    usrTry = parseInt(usrAttemptForm.value);
+  } else {
+    usrTry = parseInt(_cell);
+  }
   if (!isNaN(usrTry) && usrTry >= 1 && usrTry <= rangeN) {
     if (mineField.indexOf(usrTry) != -1) {             // ** BAD STEP **
       usrOut = true;
@@ -76,6 +74,7 @@ function tryBtnAction() {
       } else {                                   // ** LUCKY STEP: RE-TRYING **
         levelDisplay('update',usrCount,rangeN,mineN,usrLevel);
         attemptFormDisplay('update',usrCount,rangeN);
+        mineGridPassedCell(usrTry);
       }
     } else {
       // number already tried
@@ -227,10 +226,10 @@ function mineGridDeploy(_mineField,_rangeN,_elID) {
   el.innerHTML = html;
 }
 function mineGridClick(_mineField,_cell) {
-  if (_mineField.indexOf(_cell) == -1) 
-    console.log('safe click on cell '+_cell+'!');
-  else 
-    console.log('BOOM on cell '+_cell+'!');
+  tryBtnAction(_cell);
+}
+function mineGridPassedCell(_cell) {
+  document.getElementById(_cell).className = 'passed';
 }
 function rangeByLevel(_choice) {
   switch (_choice) {
