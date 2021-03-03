@@ -143,15 +143,14 @@ main .input_form #msg button {
 */
 
 #grid tr td {
-  background-color: white;
-  border: 1px solid black;
-
+  background-color: var(--realwhite);
+  border: 3px solid var(--white);
+  border-radius: 20%;
 }
-.mine {
+#grid .mine {
   background-color: var(--purple);
   color: var(--realwhite);
 }
-
 
 /****************************************************************
 **  DISPLAY ON/OFF

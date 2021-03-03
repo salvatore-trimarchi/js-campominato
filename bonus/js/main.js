@@ -10,9 +10,6 @@ var level0range = rowN0*colN0, // 100 level 0 steps
     level1range = rowN1*colN1, //  81 level 1 steps
     level2range = rowN2*colN2; //  49 level 2 steps
 
-
-// mineGridGen(mineN,gridByRange(_range)[0],gridByRange(_range)[1],'grid');
-
 function mineGridGen(_mineN,_rowN,_colN,_el) {
   // mine set generation
   var mineSet = [];
@@ -25,16 +22,20 @@ function mineGridGen(_mineN,_rowN,_colN,_el) {
               'mineSet:\n'+mineSet);
   // mine deploy on grid
   var gridHtml = document.getElementById(_el), cont = '';
+  var mineIcon = '<i class="fas fa-bomb"></i>';
   for (var i=0; i<_rowN; i++) {
     cont += '<tr>';
     for (var j=0; j<_colN; j++) {
-      var ij = ''+i+j;
+      var ij = parseInt(''+i+j);
+      console.log(ij);
       var classMine = (mineSet.indexOf(ij) != -1) ? ' class="mine"' : '' ; 
-      cont += '<td id="'+i+j+'"'+classMine+'>['+i+j+']</td>'
+      cont += '<td id="'+i+j+'"'+classMine+'>'+i+j+'</td>'
+      // cont += '<td id="'+i+j+'"'+classMine+'>'+mineIcon+'</td>'
     };
     cont += '</tr>\n';
   }
   gridHtml.innerHTML = cont;
+  return mineSet;
 }
 
 
