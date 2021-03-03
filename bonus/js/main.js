@@ -1,10 +1,10 @@
 //###################################################### 
 // UI GAME
 
-const mineN       =  16, // number of mines
-      level0range = 100, // level 0 steps 
-      level1range =  80, // level 1 steps
-      level2range =  50; // level 2 steps
+const mineN       =  3,//16, // number of mines
+      level0range = 10,//100, // level 0 steps 
+      level1range =  8,//80, // level 1 steps
+      level2range =  5;//50; // level 2 steps
 
 var   rangeN,                       // total steps
       mineField,                    // mine field list
@@ -29,82 +29,83 @@ function levelBtnAction() {
   if (usrLevel != '') {
     rangeN = rangeByLevel(usrLevel);
     usrCount = 1;      
-    console.log('livello '+usrLevel+', passi '+rangeN);
-    levelDisplay('update',usrCount);
-    attemptFormDisplay('update',usrCount);
-    attemptListDisplay('show',usrCount);
+    console.log('----------------------------------\n'+
+                'livello '+usrLevel+', passi '+rangeN);
+    levelDisplay('update',usrCount,rangeN,mineN,usrLevel);
+    attemptFormDisplay('update',usrCount,rangeN);
+    attemptListDisplay('show','');
     // mine field generation
     mineField = mineFieldGen(mineN,rangeN,true);
     console.log('mine field:\n'+mineField);
   } else {
-    noticeMsg('level');
+    noticeMsg('level',rangeN,'','');
   }
 }
 function tryBtnAction() {
   usrTry = parseInt(usrAttemptForm.value);
   if (!isNaN(usrTry) && usrTry >= 1 && usrTry <= rangeN) {
-    if (mineField.indexOf(usrTry) != -1) {             // ** BAD CASE **
+    if (mineField.indexOf(usrTry) != -1) {             // ** BAD STEP **
       usrOut = true;
-      noticeMsg('boom');
+      noticeMsg('boom','','',usrCount);
       attemptListDisplay('boom',usrCount);
-    } else if (usrAttemptList.indexOf(usrTry) == -1) { // ** LUCKY CASE **
+    } else if (usrAttemptList.indexOf(usrTry) == -1) { // ** LUCKY STEP **
       usrAttemptList.push(usrTry);
       console.log('passo '+usrCount+': '+usrAttemptList);
       attemptListDisplay('update',usrCount);
       usrCount++;
-      if (rangeN-mineN-usrCount+1==0) {     // ** LUCKY CASE: HAPPY END **
+      if (usrAttemptList.length==rangeN-mineN) { // ** LUCKY STEP: HAPPY END **
         usrOut = true;
-        noticeMsg('alive');
-        attemptListDisplay('alive',usrCount);
-      } else {                              // ** LUCKY CASE: RE-TRYING **
-        levelDisplay('update',usrCount);
-        attemptFormDisplay('update',usrCount);
+        noticeMsg('alive','','','');
+        attemptListDisplay('alive','');
+      } else {                                   // ** LUCKY STEP: RE-TRYING **
+        levelDisplay('update',usrCount,rangeN,mineN,usrLevel);
+        attemptFormDisplay('update',usrCount,rangeN);
       }
     } else {
-      noticeMsg('repeated');
+      noticeMsg('repeated','',usrTry,'');
     }
   } else {
-    noticeMsg('wrong');
+    noticeMsg('wrong',rangeN,'','');
   }
 }
 function eraseBtnAction() {
-  levelDisplay('form',usrCount);  
-  attemptFormDisplay('hide',usrCount);
-  attemptListDisplay('hide',usrCount);
+  levelDisplay('form','','','','');  
+  attemptFormDisplay('hide','','');
+  attemptListDisplay('hide','');
 }
 function resumeBtnAction() {
   if (usrOut) eraseBtnAction();
-  noticeMsg();
+  noticeMsg('',rangeN,'','');
 }
 
 // ** ELEMENTS DISPLAY FUNCTIONS **
-function levelDisplay(mode,count) {
+function levelDisplay(_mode,_count,_range,_mine,_level) {
   var usrLevelBox     = document.getElementById('usr_level_box');     // class show/hide
   var usrLevelDisplay = document.getElementById('usr_level_display'); // class show/hide
   var usrLevelMsg     = document.getElementById('usr_level_msg');     // innerHtml message
-  var rem = rangeN-mineN-count+1;
   usrLevelForm.value = '';
-  switch (mode) {
+  switch (_mode) {
     case 'form': // level form - switch choice
-      usrLevelBox.className     = 'show';
-      usrLevelDisplay.className = 'hide';
-      usrLevelMsg.innerHTML     = '';
-      break;
+    usrLevelBox.className     = 'show';
+    usrLevelDisplay.className = 'hide';
+    usrLevelMsg.innerHTML     = '';
+    break;
     case 'update': // level form - switch game
+      var rem = _range-_mine-_count+1;
       usrLevelBox.className     = 'hide';
       usrLevelDisplay.className = 'show';
       usrLevelMsg.innerHTML     = 
-        'Gioca al livello <span class="strong">'+usrLevel+'</span><br>'+
-        'Evita '+mineN+' mine, sopravvivi '+rem+' pass'+((rem==1)?'o':'i');
+        'Gioca al livello <span class="strong">'+_level+'</span><br>'+
+        'Evita '+_mine+' mine, sopravvivi '+rem+' pass'+((rem==1)?'o':'i');
       break;
       default: //
   }
 }
-function attemptFormDisplay(mode,count) {
+function attemptFormDisplay(_mode,_count,_range) {
   var usrAttemptBox   = document.getElementById('usr_attempt_box');   // class show/hide
   var usrAttemptLabel = document.getElementById('usr_attempt_label'); // innerHtml message
   usrAttemptForm.value = '';
-  switch (mode) {
+  switch (_mode) {
     case 'hide': // attempt form - hide
       usrAttemptBox.className   = 'hide';
       usrAttemptLabel.innerHTML = '';
@@ -112,17 +113,17 @@ function attemptFormDisplay(mode,count) {
       break;
     case 'update': // attempt form - show
       usrAttemptBox.className   = 'show';
-      usrAttemptLabel.innerHTML = 'Passo #'+count;
-      usrAttemptForm.placeholder    = 'numero da 1 a '+rangeN+'';
+      usrAttemptLabel.innerHTML = 'Passo #'+_count;
+      usrAttemptForm.placeholder    = 'numero da 1 a '+_range+'';
       break;
     default: //
   }
 }
-function attemptListDisplay(mode,count) {
+function attemptListDisplay(_mode,_count) {
   var displayResult = document.getElementById('display_result'); // class show/hide
   var resultList    = document.getElementById('result_list');    // innerHtml message
   var buttonBox     = document.getElementById('button_box');     // class show/hide
-  switch (mode) {
+  switch (_mode) {
     case 'show': // attempt list - show
       displayResult.className = 'show';
       resultList.innerHTML    = '<tr><td><strong>#</strong></td><td><strong>valore</strong></td><tr>';
@@ -135,10 +136,10 @@ function attemptListDisplay(mode,count) {
       usrAttemptList          = [];
       break;
     case 'update': // attempt list - fill
-      resultList.innerHTML += '<tr><td>'+count+'</td><td>'+usrAttemptList[count-1]+'</td><tr>';
+      resultList.innerHTML += '<tr><td>'+_count+'</td><td>'+usrAttemptList[_count-1]+'</td><tr>';
       break;
     case 'boom':
-      resultList.innerHTML += '<tr><td>'+count+'</td><td class="strong">BOOM!</td><tr>';
+      resultList.innerHTML += '<tr><td>'+_count+'</td><td class="strong">BOOM!</td><tr>';
       break;
     case 'alive':
       resultList.innerHTML += '<tr><td colspan="2" class="strong">SEI SALVO!</td><tr>';
@@ -148,21 +149,21 @@ function attemptListDisplay(mode,count) {
 }
 
 // ** NOTICE MESSAGES **
-function noticeMsg(w) {
+function noticeMsg(_msg,_range,_try,_count) {
   var msgHtml      = document.getElementById('msg');       // class show/hide
   var checkMsgHtml = document.getElementById('check_msg'); // innerHtml message
-  switch (w) {
+  switch (_msg) {
     case 'repeated': // number already tried
-      checkMsgHtml.innerHTML = usrTry+' è già presente, riprova!'; 
+      checkMsgHtml.innerHTML = _try+' è già presente, riprova!'; 
       break;
     case 'wrong': // wrong input
-      checkMsgHtml.innerHTML = 'Inserisci un numero da 1 a '+rangeN+'!';
+      checkMsgHtml.innerHTML = 'Inserisci un numero da 1 a '+_range+'!';
       break;
     case 'level': // no level
       checkMsgHtml.innerHTML = 'Inserisci il livello!';
       break;
     case 'boom': // boom!
-      checkMsgHtml.innerHTML = 'Sei finito su una mina al passo <span class="strong">'+usrCount+'</span>!';
+      checkMsgHtml.innerHTML = 'Sei finito su una mina al passo <span class="strong">'+_count+'</span>!';
       break;
     case 'alive': // alive!
       checkMsgHtml.innerHTML = '<strong>Sopravvissuto!</strong>';
@@ -170,7 +171,7 @@ function noticeMsg(w) {
     default: // hide message
       checkMsgHtml.innerHTML = '';
   }
-  if (w == null) msgHtml.className = 'hide';
+  if (_msg == '') msgHtml.className = 'hide';
   else {
     msgHtml.className = 'show';
     usrAttemptForm.value = '';
