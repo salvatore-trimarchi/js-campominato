@@ -52,11 +52,11 @@ function tryBtnAction() {
       console.log('passo '+usrCount+': '+usrAttemptList);
       attemptListDisplay('update',usrCount);
       usrCount++;
-      if (rangeN-mineN-usrCount+1==0) {       // ** HAPPY END **
+      if (rangeN-mineN-usrCount+1==0) {     // ** LUCKY CASE: HAPPY END **
         usrOut = true;
         noticeMsg('alive');
         attemptListDisplay('alive',usrCount);
-      } else {                                // ** RE-TRYING **
+      } else {                              // ** LUCKY CASE: RE-TRYING **
         levelDisplay('update',usrCount);
         attemptFormDisplay('update',usrCount);
       }
@@ -83,7 +83,7 @@ function levelDisplay(mode,count) {
   var usrLevelDisplay = document.getElementById('usr_level_display'); // class show/hide
   var usrLevelMsg     = document.getElementById('usr_level_msg');     // innerHtml message
   var rem = rangeN-mineN-count+1;
-  usrLevelForm.value        = '';
+  usrLevelForm.value = '';
   switch (mode) {
     case 'form': // level form - switch choice
       usrLevelBox.className     = 'show';
@@ -152,22 +152,22 @@ function noticeMsg(w) {
   var msgHtml      = document.getElementById('msg');       // class show/hide
   var checkMsgHtml = document.getElementById('check_msg'); // innerHtml message
   switch (w) {
-    case 'repeated': // warning: number already tried
+    case 'repeated': // number already tried
       checkMsgHtml.innerHTML = usrTry+' è già presente, riprova!'; 
       break;
-    case 'wrong': // warning: wrong input
+    case 'wrong': // wrong input
       checkMsgHtml.innerHTML = 'Inserisci un numero da 1 a '+rangeN+'!';
       break;
-    case 'level': // warning: no level
+    case 'level': // no level
       checkMsgHtml.innerHTML = 'Inserisci il livello!';
       break;
-    case 'boom': // warning: boom!
+    case 'boom': // boom!
       checkMsgHtml.innerHTML = 'Sei finito su una mina al passo <span class="strong">'+usrCount+'</span>!';
       break;
-    case 'alive': // warninf: alive!
+    case 'alive': // alive!
       checkMsgHtml.innerHTML = '<strong>Sopravvissuto!</strong>';
       break;  
-    default: // hide warning
+    default: // hide message
       checkMsgHtml.innerHTML = '';
   }
   if (w == null) msgHtml.className = 'hide';
