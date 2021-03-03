@@ -10,16 +10,18 @@ var level0range = rowN0*colN0, // 100 level 0 steps
     level1range = rowN1*colN1, //  81 level 1 steps
     level2range = rowN2*colN2; //  49 level 2 steps
 
+var mineSet;
+
 function mineGridGen(_mineN,_rowN,_colN,_elID) {
   // mine set generation
-  var mineSet = [];
-  while (mineSet.length<_mineN) {
+  var ms = [];
+  while (ms.length<_mineN) {
     // var ij = parseInt(''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1));
     var ij = ''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1);
-    if (mineSet.indexOf(ij) == -1) mineSet.push(ij);
+    if (ms.indexOf(ij) == -1) ms.push(ij);
   }
-  mineSet.sort(function(a,b){return a-b;});
-  console.log('------------------------------\nmineSet:\n'+mineSet);
+  ms.sort(function(a,b){return a-b;});
+  console.log('------------------------------\nmineSet:\n'+ms);
   // mine deploy on grid
   var el = document.getElementById(_elID), html = '';
   var mineIcon = '<i class="fas fa-bomb"></i>';
@@ -28,24 +30,21 @@ function mineGridGen(_mineN,_rowN,_colN,_elID) {
     for (var j=0; j<_colN; j++) {
       // var ij = parseInt(''+i+j);
       var ij = ''+i+j;
-      var classMine = (mineSet.indexOf(ij) != -1) ? 'class="mine"' : '' ; 
-      var onclickCell = 'onclick="cellClicked('+ij+')"';
-      html += '<td id="'+i+j+'" '+classMine+' '+onclickCell+'>'+i+j+'</td>';
-      // html += '<td id="'+i+j+'"'+classMine+'>'+mineIcon+'</td>';
-      // document.getElementById(ij).addEventListener('click', cellClicked);
+      var classMine = (ms.indexOf(ij) != -1) ? 'class="mine"' : '' ; 
+      var onclickCell = 'onclick="clickCell(\''+ij+'\')"';
+      html += '<td id="'+ij+'" '+classMine+' '+onclickCell+'>'+ij+'</td>';
     }
     html += '</tr>';
   }
   el.innerHTML = html;
-  return mineSet;
+  return ms;
 }
 
-
-function addLiestener(_elID,_event) {
-  document.getElementById(_elID).addEventListener(_event, cellClicked);
-}
-function cellClicked(_cell) {
-  console.log('cell '+_cell+' clicked!');
+function clickCell(_cell) {
+  if (mineSet.indexOf(_cell) == -1) 
+    console.log('cell '+_cell+' safe clicked!');
+  else 
+    console.log('boom on cell '+_cell+'!');
 }
 
 
@@ -85,8 +84,8 @@ function levelBtnAction() {
     // mine field generation
     mineField = mineFieldGen(mineN,rangeN,true);
     console.log('mine field:\n'+mineField);
-    // grid gen & diaplay
-    mineGridGen(mineN,gridByRange(rangeN)[0],gridByRange(rangeN)[1],'grid');
+    // grid gen & display
+    mineSet = mineGridGen(mineN,gridByRange(rangeN)[0],gridByRange(rangeN)[1],'grid');
     elDisplay('grid_box','show');
   } else {
     // no level defined
