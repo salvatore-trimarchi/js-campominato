@@ -146,6 +146,7 @@ main .input_form #msg button {
   background-color: var(--realwhite);
   border: 3px solid var(--white);
   border-radius: 20%;
+  cursor: pointer;
 }
 #grid .mine {
   background-color: var(--purple);

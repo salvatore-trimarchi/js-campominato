@@ -10,32 +10,42 @@ var level0range = rowN0*colN0, // 100 level 0 steps
     level1range = rowN1*colN1, //  81 level 1 steps
     level2range = rowN2*colN2; //  49 level 2 steps
 
-function mineGridGen(_mineN,_rowN,_colN,_el) {
+function mineGridGen(_mineN,_rowN,_colN,_elID) {
   // mine set generation
   var mineSet = [];
   while (mineSet.length<_mineN) {
-    var ij = parseInt(''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1));
+    // var ij = parseInt(''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1));
+    var ij = ''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1);
     if (mineSet.indexOf(ij) == -1) mineSet.push(ij);
   }
   mineSet.sort(function(a,b){return a-b;});
-  console.log('------------------------------\n'+
-              'mineSet:\n'+mineSet);
+  console.log('------------------------------\nmineSet:\n'+mineSet);
   // mine deploy on grid
-  var gridHtml = document.getElementById(_el), cont = '';
+  var el = document.getElementById(_elID), html = '';
   var mineIcon = '<i class="fas fa-bomb"></i>';
   for (var i=0; i<_rowN; i++) {
-    cont += '<tr>';
+    html += '<tr>';
     for (var j=0; j<_colN; j++) {
-      var ij = parseInt(''+i+j);
-      console.log(ij);
-      var classMine = (mineSet.indexOf(ij) != -1) ? ' class="mine"' : '' ; 
-      cont += '<td id="'+i+j+'"'+classMine+'>'+i+j+'</td>'
-      // cont += '<td id="'+i+j+'"'+classMine+'>'+mineIcon+'</td>'
-    };
-    cont += '</tr>\n';
+      // var ij = parseInt(''+i+j);
+      var ij = ''+i+j;
+      var classMine = (mineSet.indexOf(ij) != -1) ? 'class="mine"' : '' ; 
+      var onclickCell = 'onclick="cellClicked('+ij+')"';
+      html += '<td id="'+i+j+'" '+classMine+' '+onclickCell+'>'+i+j+'</td>';
+      // html += '<td id="'+i+j+'"'+classMine+'>'+mineIcon+'</td>';
+      // document.getElementById(ij).addEventListener('click', cellClicked);
+    }
+    html += '</tr>';
   }
-  gridHtml.innerHTML = cont;
+  el.innerHTML = html;
   return mineSet;
+}
+
+
+function addLiestener(_elID,_event) {
+  document.getElementById(_elID).addEventListener(_event, cellClicked);
+}
+function cellClicked(_cell) {
+  console.log('cell '+_cell+' clicked!');
 }
 
 
