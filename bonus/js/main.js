@@ -1,10 +1,46 @@
 //###################################################### 
-// GAME + UI
+// GAME + 2D UI
 
-const mineN       =  16, // number of mines
-      level0range = 100, // level 0 steps 
-      level1range =  80, // level 1 steps
-      level2range =  50; // level 2 steps
+const mineN = 16, // number of mines
+      rowN0 = 10, colN0 = 10, // 100 level 0 cells 
+      rowN1 =  9, colN1 =  9, //  81 level 1 cells
+      rowN2 =  7, colN2 =  7; //  49 level 2 cells
+
+var level0range = rowN0*colN0, // 100 level 0 steps 
+    level1range = rowN1*colN1, //  81 level 1 steps
+    level2range = rowN2*colN2; //  49 level 2 steps
+
+
+// mineGridGen(mineN,gridByRange(_range)[0],gridByRange(_range)[1],'grid');
+
+function mineGridGen(_mineN,_rowN,_colN,_el) {
+  // mine set generation
+  var mineSet = [];
+  while (mineSet.length<_mineN) {
+    var ij = parseInt(''+randomNumber(0,_rowN-1)+randomNumber(0,_colN-1));
+    if (mineSet.indexOf(ij) == -1) mineSet.push(ij);
+  }
+  mineSet.sort(function(a,b){return a-b;});
+  console.log('------------------------------\n'+
+              'mineSet:\n'+mineSet);
+  // mine deploy on grid
+  var gridHtml = document.getElementById(_el), cont = '';
+  for (var i=0; i<_rowN; i++) {
+    cont += '<tr>';
+    for (var j=0; j<_colN; j++) {
+      var ij = ''+i+j;
+      var classMine = (mineSet.indexOf(ij) != -1) ? ' class="mine"' : '' ; 
+      cont += '<td id="'+i+j+'"'+classMine+'>['+i+j+']</td>'
+    };
+    cont += '</tr>\n';
+  }
+  gridHtml.innerHTML = cont;
+}
+
+
+
+//###################################################### 
+// GAME + 1D UI
 
 var   rangeN,         // total steps
       mineField,      // mine field list, array
@@ -38,6 +74,9 @@ function levelBtnAction() {
     // mine field generation
     mineField = mineFieldGen(mineN,rangeN,true);
     console.log('mine field:\n'+mineField);
+    // grid gen & diaplay
+    mineGridGen(mineN,gridByRange(rangeN)[0],gridByRange(rangeN)[1],'grid');
+    elDisplay('grid_box','show');
   } else {
     // no level defined
     noticeMsg('nolevel',rangeN,'','');
@@ -76,6 +115,7 @@ function eraseBtnAction() {
   levelDisplay('form','','','','');
   attemptFormDisplay('hide','','');
   attemptListDisplay('hide','');
+  elDisplay('grid_box','hide');
 }
 function resumeBtnAction() {
   if (usrOut) eraseBtnAction();
@@ -83,6 +123,14 @@ function resumeBtnAction() {
 }
 
 // ** ELEMENTS DISPLAY FUNCTIONS **
+function elDisplay(_el,_mode) {
+  var el = document.getElementById(_el);
+  switch (_mode) {
+    case 'show': el.className = 'show'; break;
+    case 'hide': el.className = 'hide'; break;
+    default: //
+  }
+}
 function levelDisplay(_mode,_count,_range,_mine,_level) {
   var usrLevelBox     = document.getElementById('usr_level_box');     // class show/hide
   var usrLevelDisplay = document.getElementById('usr_level_display'); // class show/hide
@@ -188,6 +236,13 @@ function rangeByLevel(_choice) {
     case 'difficile':  return level2range;
     case 'intermedio': return level1range;
     default:           return level0range;
+  }
+}
+function gridByRange(_range) {
+  switch (_range) {
+    case level2range: return [rowN2,colN2];
+    case level1range: return [rowN1,colN1];
+    default:          return [rowN0,colN0];
   }
 }
 /**
