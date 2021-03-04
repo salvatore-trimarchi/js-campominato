@@ -143,19 +143,21 @@ main .input_form #msg button {
 */
 
 #grid tr td {
-  padding: 3px;
-  width: 40px;
-  height: 40px;
-  background-color: var(--realwhite);
-  border: 3px solid var(--white);
-  border-radius: 20%;
+  width: 35px;
+  height: 35px;
+  background-color: var(--white);
+  border-radius: 10%;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 15px 25px, rgba(0, 0, 0, 0.05) 0px 5px 10px;
   cursor: pointer;
 }
-#grid .mine {
+#grid tr td .fas {
+  font-size: 1.4em;
+}
+#grid tr td.mine {
   background-color: var(--purple);
   color: var(--realwhite);
 }
-#grid .safe {
+#grid tr td.safe {
   background-color: var(--green);
   color: var(--realwhite);
 }
@@ -163,13 +165,30 @@ main .input_form #msg button {
   background-color: var(--green);
   color: var(--realwhite);
 }
-@keyframes boom {
-  20% { transform: translateX(50px)  rotate(10deg);  }
-  40% { transform: translateX(-50px) rotate(-10deg); }
-  60% { transform: translateX(50px)  rotate(10deg);  }
-  80% { transform: translateX(-50px) rotate(-10deg); }
+@keyframes drama1 {
+  20% { transform: translateX(50px)  rotate(5deg);  }
+  40% { transform: translateX(-50px) rotate(-5deg); }
+  60% { transform: translateX(50px)  rotate(5deg);  }
+  80% { transform: translateX(-50px) rotate(-5deg); }
  100% { transform: translateX(0)     rotate(0deg);   }
  }
+ @keyframes drama2 {
+   0% { transform: scale(1.00); }
+  20% { transform: scale(1.10); }
+  40% { transform: scale(1.30); }
+  60% { transform: scale(1.60); }
+  80% { transform: scale(1.20); }
+ 100% { transform: scale(1.00); }
+ }
+ @keyframes quiet1 {
+  0% { transform: scale(1.00); }
+ 50% { transform: scale(1.40); }
+100% { transform: scale(1.00); }
+}
+@keyframes quiet2 {
+  0% { filter: opacity(0%); }
+100% { filter: opacity(100%); }
+}
 
 /****************************************************************
 **  DISPLAY ON/OFF

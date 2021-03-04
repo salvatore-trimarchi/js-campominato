@@ -1,20 +1,20 @@
 //###################################################### 
-// GAME + 2D UI
+// GAME + 2D UI + 1D UI
 
 const mineN = 16, // number of mines
-      rowN0 = 10, colN0 = 10, // 100 level 0 cells 
-      rowN1 =  9, colN1 =  9, //  81 level 1 cells
-      rowN2 =  7, colN2 =  7; //  49 level 2 cells
+      rowN0 = 10, colN0 = 10, // 100 = 10 * 10 level 0 cells 
+      rowN1 =  9, colN1 =  9, //  81 =  9 *  9 level 1 cells
+      rowN2 =  7, colN2 =  7; //  49 =  7 *  7 level 2 cells
 
 var level0range = rowN0*colN0, // 100 level 0 steps 
     level1range = rowN1*colN1, //  81 level 1 steps
     level2range = rowN2*colN2; //  49 level 2 steps
 
-var   rangeN,         // total steps
-      mineField,      // mine field list, array
+var   rangeN,              // total steps
+      mineField,           // mine field list, array
       usrAttemptList = [], // user attempt list, array
-      usrCount,       // user attempt counter
-      usrOut;         // user KIA or escaped, bool
+      usrCount,            // user attempt counter
+      usrOut;              // user KIA or escaped, bool
 
 // form sources
 var usrLevelForm   = document.getElementById('usr_level');
@@ -64,21 +64,21 @@ function tryBtnAction(_cell) {
       usrOut = true;
       noticeMsg('boom','','',usrCount);
       attemptListDisplay('boom',usrCount);
-      mineGridDramaCell(mineField,rangeN);
+      mineGridShowMines(mineField,rangeN,true);
     } else if (usrAttemptList.indexOf(usrTry) == -1) { // ** LUCKY STEP **
       usrAttemptList.push(usrTry);
       console.log('passo '+usrCount+': '+usrAttemptList);
       attemptListDisplay('update',usrCount);
+      mineGridPassedCell(usrTry,rangeN);
       usrCount++;
       if (usrAttemptList.length==rangeN-mineN) { // ** LUCKY STEP: HAPPY END **
         usrOut = true;
         noticeMsg('alive','','','');
         attemptListDisplay('alive','');
-        mineGridPassedCell(usrTry,rangeN);
+        mineGridShowMines(mineField,rangeN,false);
       } else {                                   // ** LUCKY STEP: RE-TRYING **
         levelDisplay('update',usrCount,rangeN,mineN,usrLevel);
         attemptFormDisplay('update',usrCount,rangeN);
-        mineGridPassedCell(usrTry,rangeN);
       }
     } else {
       // number already tried
@@ -110,17 +110,17 @@ function elDisplay(_el,_mode) {
   }
 }
 function levelDisplay(_mode,_count,_range,_mine,_level) {
-  var usrLevelBox     = document.getElementById('usr_level_box');     // class show/hide
-  var usrLevelDisplay = document.getElementById('usr_level_display'); // class show/hide
-  var usrLevelMsg     = document.getElementById('usr_level_msg');     // innerHtml message
+  var usrLevelBox     = document.getElementById('usr_level_box');
+  var usrLevelDisplay = document.getElementById('usr_level_display');
+  var usrLevelMsg     = document.getElementById('usr_level_msg');
   usrLevelForm.value = '';
   switch (_mode) {
-    case 'form': // level form - switch choice
+    case 'form':
     usrLevelBox.className     = 'show';
     usrLevelDisplay.className = 'hide';
     usrLevelMsg.innerHTML     = '';
     break;
-    case 'update': // level form - switch game
+    case 'update':
       var rem = _range-_mine-_count+1;
       usrLevelBox.className     = 'hide';
       usrLevelDisplay.className = 'show';
@@ -132,16 +132,16 @@ function levelDisplay(_mode,_count,_range,_mine,_level) {
   }
 }
 function attemptFormDisplay(_mode,_count,_range) {
-  var usrAttemptBox   = document.getElementById('usr_attempt_box');   // class show/hide
-  var usrAttemptLabel = document.getElementById('usr_attempt_label'); // innerHtml message
+  var usrAttemptBox   = document.getElementById('usr_attempt_box');
+  var usrAttemptLabel = document.getElementById('usr_attempt_label');
   usrAttemptForm.value = '';
   switch (_mode) {
-    case 'hide': // attempt form - hide
+    case 'hide':
       usrAttemptBox.className   = 'hide';
       usrAttemptLabel.innerHTML = '';
       usrAttemptForm.placeholder    = '';
       break;
-    case 'update': // attempt form - show
+    case 'update':
       usrAttemptBox.className   = 'show';
       usrAttemptLabel.innerHTML = 'Passo #'+_count;
       usrAttemptForm.placeholder    = 'numero da 1 a '+_range+'';
@@ -150,29 +150,28 @@ function attemptFormDisplay(_mode,_count,_range) {
   }
 }
 function attemptListDisplay(_mode,_count) {
-  var displayResult = document.getElementById('display_result'); // class show/hide
-  var resultList    = document.getElementById('result_list');    // innerHtml message
-  var buttonBox     = document.getElementById('button_box');     // class show/hide
+  var displayResult = document.getElementById('display_result');
+  var resultList    = document.getElementById('result_list');
+  var buttonBox     = document.getElementById('button_box');
   switch (_mode) {
-    case 'show': // attempt list - show
+    case 'show':
       displayResult.className = 'show';
-      resultList.innerHTML    = '<tr><td><strong>#</strong></td><td><strong>valore</strong></td><tr>';
       buttonBox.className     = 'show';
       break;
-    case 'hide': // attempt list - hide+empty
+    case 'hide':
       displayResult.className = 'hide';
       resultList.innerHTML    = '';
       buttonBox.className     = 'hide';
       usrAttemptList          = [];
       break;
-    case 'update': // attempt list - fill
-      resultList.innerHTML += '<tr><td>'+_count+'</td><td>'+usrAttemptList[_count-1]+'</td><tr>';
+    case 'update':
+      resultList.innerHTML = '<tr><td>'+_count+'</td><td>'+usrAttemptList[_count-1]+'</td><tr>' + resultList.innerHTML;
       break;
-    case 'boom':
-      resultList.innerHTML += '<tr><td>'+_count+'</td><td class="strong">BOOM!</td><tr>';
+    case 'boom': 
+      resultList.innerHTML = '<tr><td>'+_count+'</td><td class="strong">BOOM!</td><tr>' + resultList.innerHTML;
       break;
     case 'alive':
-      resultList.innerHTML += '<tr><td colspan="2"><strong>SEI SALVO!</strong></td><tr>';
+      resultList.innerHTML = '<tr><td colspan="2"><strong>SEI SALVO!</strong></td><tr>' + resultList.innerHTML;
     break;
     default: //
   }
@@ -180,8 +179,8 @@ function attemptListDisplay(_mode,_count) {
 
 // ** NOTICE MESSAGES **
 function noticeMsg(_msg,_range,_try,_count) {
-  var msgHtml      = document.getElementById('msg');       // class show/hide
-  var checkMsgHtml = document.getElementById('check_msg'); // innerHtml message
+  var msgHtml      = document.getElementById('msg');
+  var checkMsgHtml = document.getElementById('check_msg');
   switch (_msg) {
     case 'repeated': // number already tried
       checkMsgHtml.innerHTML = _try+' è già presente, riprova!'; 
@@ -192,10 +191,10 @@ function noticeMsg(_msg,_range,_try,_count) {
     case 'nolevel': // no level defined
       checkMsgHtml.innerHTML = 'Inserisci il livello!';
       break;
-    case 'boom': // boom!
+    case 'boom':
       checkMsgHtml.innerHTML = 'Sei finito su una mina al passo <span class="strong">'+_count+'</span>!';
       break;
-    case 'alive': // alive!
+    case 'alive':
       checkMsgHtml.innerHTML = '<strong class="strong">Sopravvissuto!</strong>';
       break;  
     default: // hide message
@@ -208,7 +207,17 @@ function noticeMsg(_msg,_range,_try,_count) {
   }
 }
 
-// ** 2D GAME FUNCTIONS **
+// ** GRID FUNCTIONS **
+function mineFieldGen(_mineNum,_rangeNum) {
+  if (_mineNum > _rangeNum) _mineNum = _rangeNum;
+  var mf = [];
+  while (mf.length<_mineNum) {
+    var n = randomNumber(1,_rangeNum);
+    if (mf.indexOf(n) == -1) mf.push(n);
+  }
+  mf.sort(function(a,b) {return a-b;});
+  return mf;
+}
 function mineGridDeploy(_mineField,_rangeN,_elID,_bol) {
   var row = gridByRange(_rangeN)[0];
   var col = gridByRange(_rangeN)[1];
@@ -226,7 +235,6 @@ function mineGridDeploy(_mineField,_rangeN,_elID,_bol) {
           classMine = '';
           cellView = cell;
         } 
-        // var onclickCell = 'onclick="mineGridClick(\''+_mineField+'\',\''+cell+'\')"';
         var onclickCell = 'onclick="mineGridClick(\''+cell+'\')"';
         html += '<td id="'+cell+'" '+classMine+' '+onclickCell+'>'+cellView+'</td>';
         cell++;
@@ -252,12 +260,21 @@ function mineGridNeighborsHint(_cell,_range) {
   console.log('bad neighbors: '+count);
   document.getElementById(_cell).innerHTML = count;
 }
-function mineGridDramaCell(_mineField,_rangeN) {
+function mineGridShowMines(_mineField,_rangeN,_bol) {
   mineGridDeploy(_mineField,_rangeN,'grid',true);
-  mineGridDramaAnimation();
+  if (_bol) mineGridDramaAnimation();
+  else mineGridQuietAnimation();
 }
 function mineGridDramaAnimation() {
-  document.getElementById('grid').style.animation = 'boom 0.6s ease-in-out both';
+  document.getElementById('grid').style.animation = 'drama1 0.6s ease-in-out 0.2s both';
+  var mine = document.getElementsByClassName('mine');
+  for (var i=0; i<mine.length; i++) mine[i].style.animation = 'drama2 0.8s ease-in both';
+}
+function mineGridQuietAnimation() {
+  var safe = document.getElementsByClassName('safe');
+  var mine = document.getElementsByClassName('mine');
+  for (var i=0; i<safe.length; i++) safe[i].style.animation = 'quiet1 1s linear';
+  for (var i=0; i<mine.length; i++) mine[i].style.animation = 'quiet2 2s linear 0.2s';
 }
 function rangeByLevel(_choice) {
   switch (_choice) {
@@ -272,20 +289,6 @@ function gridByRange(_range) {
     case level1range: return [rowN1,colN1];
     default:          return [rowN0,colN0];
   }
-}
-/**
- * ritorna array
- * _mineNum numeri diversi tra 1 e _rangeNum
- */ 
-function mineFieldGen(_mineNum,_rangeNum) {
-  if (_mineNum > _rangeNum) _mineNum = _rangeNum;
-  var mf = [];
-  while (mf.length<_mineNum) {
-    var n = randomNumber(1,_rangeNum);
-    if (mf.indexOf(n) == -1) mf.push(n);
-  }
-  mf.sort(function(a,b) {return a-b;});
-  return mf;
 }
 function randomNumber(a,b) {
   return Math.floor(Math.random()*(b-a+1)+a);
